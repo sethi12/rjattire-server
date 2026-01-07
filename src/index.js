@@ -10,17 +10,25 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://your-admin.vercel.app",
-      "https://your-client.vercel.app",
+      "https://rj-attire-admin.vercel.app",
+      "https://rj-attire-client.vercel.app", // optional
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// 🔥 VERY IMPORTANT (preflight support)
+app.options("*", cors());
+
 app.use(express.json());
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/client", clientRoutes);
+
+app.get("/health", (req, res) => {
+  res.json({ status: "OK" });
+});
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
