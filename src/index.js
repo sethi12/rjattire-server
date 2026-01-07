@@ -11,7 +11,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://rj-attire-admin.vercel.app",
-      "https://rj-attire-client.vercel.app", // optional
+      "https://rj-attires.vercel.app", // optional
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
