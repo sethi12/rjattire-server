@@ -268,18 +268,18 @@ export const addProduct = async (req, res) => {
       stock,
       stitchedType,
       cod,
-      shortDescription,
+      category,
       description,
       fabricDetails,
       fabricMeters,
     } = req.body;
 
-    if (!name || !brand || !price) {
-      return res.status(400).json({
-        success: false,
-        message: "Required fields missing",
-      });
-    }
+    // if (!name || !brand || !price) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Required fields missing",
+    //   });
+    // }
 
     const bucket = storage.bucket();
 
@@ -324,7 +324,8 @@ const docRef = await db.collection("products").add({
   color,
   price: Number(price),
   stock: Number(stock),
-  stitchedType:String(stitched).toLowerCase()==="UnStiched",
+  stitchedType:stitchedType||'',
+  category,
   cod: String(cod).toLowerCase() === "yes", // ✅ FIXED
   description,
   fabricDetails: JSON.parse(fabricDetails || "[]"),
