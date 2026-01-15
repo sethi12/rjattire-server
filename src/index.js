@@ -10,6 +10,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
+      "http://localhost:3001",
       "https://rj-attire-admin.vercel.app",
       "https://rj-attires.vercel.app", // optional
     ],

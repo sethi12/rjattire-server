@@ -22,6 +22,18 @@ export const getAllBrandsClient = async (req, res) => {
   }
 };
 
+export const getAllCategories = async(req,res)=>{
+ try {
+   const categories = await getCollection("Categories");
+  res.status(200).json(categories)
+ } catch (error) {
+  console.error("Failed to fetch categories")
+  res.status(500).json({
+    success:false,
+    message:"Failed to fetch categories"
+  })
+ }
+}
 
 export const getAllProductsClient = async (req, res) => {
   try {

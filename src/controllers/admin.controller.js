@@ -364,3 +364,147 @@ export const getAllProductsAdmin = async (req, res) => {
     });
   }
 };
+
+//add to Category 
+export const addtoCategory = async (req, res) => {
+  try {
+    const { name, brand,collection } = req.body;
+    const file = req.file;
+
+    if (!name || !brand) {
+      return res.status(400).json({
+        success: false,
+        message: "Category name and brand are required",
+      });
+    }
+
+    let imageUrl = null;
+
+    /* ---------- UPLOAD IMAGE ---------- */
+    if (file) {
+      const bucket = storage.bucket();
+      const fileName = `categories/${uuid()}-${file.originalname}`;
+      const blob = bucket.file(fileName);
+
+      await blob.save(file.buffer, {
+        metadata: {
+          contentType: file.mimetype,
+        },
+        public: true,
+      });
+
+      imageUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+    }
+
+    /* ---------- SAVE TO FIRESTORE ---------- */
+    const id = await addToCollection("Categories", {
+      name,
+      brand,          // 🔗 brand reference (id)
+      image: imageUrl,
+      createdAt: new Date(),
+      collection: collection
+    });
+
+    res.json({
+      success: true,
+      id,
+      image: imageUrl,
+    });
+  } catch (error) {
+    console.error("Add Category Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to add category",
+    });
+  }
+};
+
+
+export const getAllCategories = async (req, res) => {
+  try {
+    const categories = await getCollection("Categories");
+
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error("Get Brands Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch brands",
+    });
+  }
+};
+
+export const updateCategory = async (req, res) => {
+  try {
+    const { id } = req.params; // category document ID
+    const { name, brand ,collection} = req.body;
+    const file = req.file;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Category ID is required",
+      });
+    }
+
+    const updateData = {};
+
+    if (name) updateData.name = name;
+    if (brand) updateData.brand = brand;
+    if(collection) updateData.collection = collection;
+    /* ---------- IMAGE UPDATE (OPTIONAL) ---------- */
+    if (file) {
+      const bucket = storage.bucket();
+      const fileName = `categories/${uuid()}-${file.originalname}`;
+      const blob = bucket.file(fileName);
+
+      await blob.save(file.buffer, {
+        metadata: { contentType: file.mimetype },
+        public: true,
+      });
+
+      updateData.image = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+    }
+
+    await db.collection("Categories").doc(id).update(updateData);
+
+    res.json({
+      success: true,
+      message: "Category updated successfully",
+    });
+  } catch (error) {
+    console.error("Update Category Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update category",
+    });
+  }
+};
+
+
+export const deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Category ID is required",
+      });
+    }
+
+    await db.collection("Categories").doc(id).delete();
+
+    res.json({
+      success: true,
+      message: "Category deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Category Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete category",
+    });
+  }
+};
