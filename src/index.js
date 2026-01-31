@@ -12,6 +12,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:3001",
       "https://rj-attire-admin.vercel.app",
+      "https://rjattires.in",
       "https://rj-attires.vercel.app", // optional
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
